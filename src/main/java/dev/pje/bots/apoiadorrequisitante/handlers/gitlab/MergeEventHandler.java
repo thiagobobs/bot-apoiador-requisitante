@@ -58,32 +58,32 @@ public class MergeEventHandler extends Handler<GitlabEventMergeRequest> {
 	@Override
 	public void handle(GitlabEventMergeRequest event) {
 		if (GitlabMergeRequestActionsEnum.MERGE.equals(event.getObjectAttributes().getAction()) && !gitlabService.isBranchRelease(event.getObjectAttributes().getSourceBranch())) {
-			String email = event.getUser().getEmail().equals("[REDACTED]") ? gitlabService.findUserByUsername(event.getUser().getUsername()).getEmail() : event.getUser().getEmail();
-
-			String jiraComment = String.format("MR#%s integrado ao branch %s pelo usuário %s",
-					event.getObjectAttributes().getIid().toString(), event.getObjectAttributes().getTargetBranch(), email);
-
-			String issueKey = Utils.getIssueKey(event.getObjectAttributes().getLastCommit().getMessage());
-			logger.info("Issuekey: {}", issueKey);
-
-			String jiraProjectKey = issueKey.substring(0, issueKey.indexOf("-"));
-			logger.info("Transition: {}", STATUS_ID.get(jiraProjectKey));
-
-			logger.info("Issue Status Name: {}", this.jiraService.recuperaIssue(issueKey, Collections.singletonMap("fields", JiraService.FIELD_STATUS)).getFields().getStatus().getName());
-
-			JiraIssueTransitions jiraIssueTransitions = this.jiraService.recuperarTransicoesIssue(issueKey);
-			logger.info("Transições disponíveis: {}", jiraIssueTransitions != null ? jiraIssueTransitions.getTransitions().stream().map(JiraIssueTransition::getId).collect(Collectors.joining(", ")) : "");
-			if (jiraIssueTransitions != null && jiraIssueTransitions.getTransitions().stream().anyMatch(p -> p.getId().equals(STATUS_ID.get(jiraProjectKey)))) {
-				logger.info("Transition Issue to {}", STATUS_ID.get(jiraProjectKey));
-				this.jiraService.updateIssue(issueKey, this.getIssueUpdate(event, jiraComment, STATUS_ID.get(jiraProjectKey), jiraProjectKey));
-			} else {
-				logger.info("Send Comment to Issue");
-				this.jiraService.sendTextAsComment(issueKey, jiraComment);
-			}
+//			String email = event.getUser().getEmail().equals("[REDACTED]") ? gitlabService.findUserByUsername(event.getUser().getUsername()).getEmail() : event.getUser().getEmail();
+//
+//			String jiraComment = String.format("MR#%s integrado ao branch %s pelo usuário %s",
+//					event.getObjectAttributes().getIid().toString(), event.getObjectAttributes().getTargetBranch(), email);
+//
+//			String issueKey = Utils.getIssueKey(event.getObjectAttributes().getLastCommit().getMessage());
+//			logger.info("Issuekey: {}", issueKey);
+//
+//			String jiraProjectKey = issueKey.substring(0, issueKey.indexOf("-"));
+//			logger.info("Transition: {}", STATUS_ID.get(jiraProjectKey));
+//
+//			logger.info("Issue Status Name: {}", this.jiraService.recuperaIssue(issueKey, Collections.singletonMap("fields", JiraService.FIELD_STATUS)).getFields().getStatus().getName());
+//
+//			JiraIssueTransitions jiraIssueTransitions = this.jiraService.recuperarTransicoesIssue(issueKey);
+//			logger.info("Transições disponíveis: {}", jiraIssueTransitions != null ? jiraIssueTransitions.getTransitions().stream().map(JiraIssueTransition::getId).collect(Collectors.joining(", ")) : "");
+//			if (jiraIssueTransitions != null && jiraIssueTransitions.getTransitions().stream().anyMatch(p -> p.getId().equals(STATUS_ID.get(jiraProjectKey)))) {
+//				logger.info("Transition Issue to {}", STATUS_ID.get(jiraProjectKey));
+//				this.jiraService.updateIssue(issueKey, this.getIssueUpdate(event, jiraComment, STATUS_ID.get(jiraProjectKey), jiraProjectKey));
+//			} else {
+//				logger.info("Send Comment to Issue");
+//				this.jiraService.sendTextAsComment(issueKey, jiraComment);
+//			}
 
 			this.gitlab010CheckNewScriptMigrationInCommit.handle(event);
 
-			this.gitlabService.closeMergeRequestThatCannotBeMerged(event.getProject().getId().toString());
+//			this.gitlabService.closeMergeRequestThatCannotBeMerged(event.getProject().getId().toString());
 		}
 	}
 

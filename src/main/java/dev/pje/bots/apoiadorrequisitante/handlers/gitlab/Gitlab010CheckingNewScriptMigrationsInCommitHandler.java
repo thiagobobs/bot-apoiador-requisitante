@@ -45,12 +45,12 @@ public class Gitlab010CheckingNewScriptMigrationsInCommitHandler {
 				List<GitlabScriptVersaoVO> scriptsToChange = new ArrayList<>();
 				if(addedScripts != null && !addedScripts.isEmpty()) {
 					// identificar qual é o número da versão atual
-					String currentVersion = gitlabService.getVersion(event.getProject(), branchName, true);
+					String currentVersion = gitlabService.getVersion(event.getProject().getId(), branchName, true);
 					if(StringUtils.isNotBlank(currentVersion)) {
 						// verificar se todos os arquivos adicionados estão no caminho correto
 						String destinationPath = GitlabService.SCRIPS_MIGRATION_BASE_PATH + currentVersion;
-						// buscar todos os scripts que estao na basta de migrations
-						List<GitlabRepositoryTree> currentScriptList = gitlabService.getFilesFromPath(event.getProject(), branchName, destinationPath);
+						// buscar todos os scripts que estao na pasta de migrations
+						List<GitlabRepositoryTree> currentScriptList = gitlabService.getFilesFromPath(event.getProject().getId(), branchName, destinationPath);
 						
 						boolean scriptsOutOfOrder = false;
 						for (String addedScript : addedScripts) {
@@ -85,7 +85,7 @@ public class Gitlab010CheckingNewScriptMigrationsInCommitHandler {
 							}
 						}
 						logger.info(scriptsToChange.toString());
-						this.changeScriptsPath(event.getProject(), branchName, issueKey, scriptsToChange, destinationPath, currentScriptList);
+						this.changeScriptsPath(event.getProject().getId(), branchName, issueKey, scriptsToChange, destinationPath, currentScriptList);
 					}
 				}
 			}
@@ -112,7 +112,7 @@ public class Gitlab010CheckingNewScriptMigrationsInCommitHandler {
 		return listScriptFiles;
 	}
 
-	private void changeScriptsPath(GitlabProject project, String branchName, String issueKey, 
+	private void changeScriptsPath(BigDecimal projectId, String branchName, String issueKey, 
 			List<GitlabScriptVersaoVO> scriptsToChange, String destinationPath, List<GitlabRepositoryTree> currentScriptList) {
 		if(scriptsToChange != null && !scriptsToChange.isEmpty()) {
 			// identify target version
@@ -122,6 +122,7 @@ public class Gitlab010CheckingNewScriptMigrationsInCommitHandler {
 			Integer lastOrder = 0;
 			for (GitlabRepositoryTree currentScript : currentScriptList) {
 				GitlabScriptVersaoVO currentScriptObj = new GitlabScriptVersaoVO(currentScript.getPath());
+				logger.info("Current script" + currentScriptObj.toString());
 				if(currentScriptObj.getOrder() > lastOrder) {
 					// can not count with scripts to change
 					boolean hasToChange = false;
@@ -154,7 +155,7 @@ public class Gitlab010CheckingNewScriptMigrationsInCommitHandler {
 			// encaminha para alteracao no gitlab
 			String identificadorCommit = StringUtils.isNotBlank(issueKey) ? issueKey : "RELEASE";
 			String commitMessage = identificadorCommit + " Reordenando arquivos de script";
-			gitlabService.moveFiles(project, branchName, scriptsToChange, commitMessage);
+			gitlabService.moveFiles(projectId, branchName, scriptsToChange, commitMessage);
 		}
 	}
 

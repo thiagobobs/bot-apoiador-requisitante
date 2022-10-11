@@ -30,6 +30,7 @@ import com.devplatform.model.gitlab.GitlabMergeRequestPipeline;
 import com.devplatform.model.gitlab.GitlabMergeRequestStateEnum;
 import com.devplatform.model.gitlab.GitlabMergeRequestStatusEnum;
 import com.devplatform.model.gitlab.GitlabNote;
+import com.devplatform.model.gitlab.GitlabPipelineStatusEnum;
 import com.devplatform.model.gitlab.GitlabProject;
 import com.devplatform.model.gitlab.GitlabProjectExtended;
 import com.devplatform.model.gitlab.GitlabProjectVariable;
@@ -110,9 +111,8 @@ public class GitlabService {
 	
 	public static final String POM_TAGNAME_PROJECT_VERSION_DEFAULT = "project/version";
 	
-	public List<GitlabRepositoryTree> getFilesFromPath(GitlabProject project, String branch, String path) {
-		String projectId = project.getId().toString();
-		return getFilesFromPath(projectId, branch, path);
+	public List<GitlabRepositoryTree> getFilesFromPath(BigDecimal projectId, String branch, String path) {
+		return getFilesFromPath(projectId.toString(), branch, path);
 	}
 	public List<GitlabRepositoryTree> getFilesFromPath(String projectId, String branch, String path) {
 		List<GitlabRepositoryTree> listFiles = new ArrayList<>();
@@ -130,8 +130,8 @@ public class GitlabService {
 		return listFiles;
 	}
 
-	public GitlabCommitResponse moveFiles(GitlabProject project, String branch, List<GitlabScriptVersaoVO> scriptsToChange, String commitMessage) {
-		return moveFiles(project.getId().toString(), branch, scriptsToChange, commitMessage);
+	public GitlabCommitResponse moveFiles(BigDecimal projectId, String branch, List<GitlabScriptVersaoVO> scriptsToChange, String commitMessage) {
+		return moveFiles(projectId.toString(), branch, scriptsToChange, commitMessage);
 	}
 	
 	public GitlabCommitResponse moveFiles(String projectId, String branch, List<GitlabScriptVersaoVO> scriptsToChange, String commitMessage) {
@@ -707,29 +707,10 @@ public class GitlabService {
 							"O código enviado apresenta conflitos de integração. Favor realizar rebase com o branch %s", mergeRequest.getTargetBranch()));
 
 					this.closeMergeRequest(projectId, mergeRequest.getIid());
-				} 
-//				else if (this.isMoreThanSixMonth(mergeRequest.getCreatedAt())) {
-//					this.sendMergeRequestComment(projectId, mergeRequest.getIid(), String.format(
-//							"Merge Request criado a mais de 6 meses. O código provavelmente tornou-se obsoleto. Favor realizar rebase com o branch %s", mergeRequest.getTargetBranch()));
-//
-//					this.closeMergeRequest(projectId, mergeRequest.getIid());
-//				}
+				}
 			}
 		}
 		
-	}
-
-	private boolean isMoreThanSixMonth(String createDate) {
-		Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.MONTH, -5);
-		try {
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime(new SimpleDateFormat("yyyy-MM-dd").parse(createDate));
-			return calendar.before(cal);
-		} catch (ParseException e) {
-			e.printStackTrace();
-			return false;
-		}
 	}
 
 	public List<GitlabMRResponse> findMergeRequests(String projectId, Map<String, String> options) {
@@ -993,6 +974,8 @@ public class GitlabService {
 				throw new GitlabException(String.format("MR#%s não pode ser aceito pois possui status igual a %s", mrOpened.getIid(), mrOpened.getState()));
 			}else if (BooleanUtils.isTrue(mrOpened.getHasConflicts())) {
 				throw new GitlabException(String.format("MR#%s não pode ser aceito pois apresenta conflitos de integração", mrOpened.getIid()));
+			} else if (mrOpened.getHeadPipeline().getStatus().equals(GitlabPipelineStatusEnum.FAILED)) {
+				throw new GitlabException(String.format("MR#%s não pode ser aceito pois o processamento do CI/CD não encerrou corretamente", mrOpened.getIid()));
 			} else {
 				this.rebaseMergeRequest(projectId, mrIID);
 
@@ -1158,10 +1141,8 @@ public class GitlabService {
 		return response;
 	}
 
-	public String getVersion(GitlabProject project, String branchName, Boolean onlyNumbers) {
-		String projectId = project.getId().toString();
-		
-		return getVersion(projectId, branchName, onlyNumbers);
+	public String getVersion(BigDecimal projectId, String branchName, Boolean onlyNumbers) {
+		return getVersion(projectId.toString(), branchName, onlyNumbers);
 	}
 	
 	public String getVersion(String projectId, String branchName, boolean onlyNumbers) {

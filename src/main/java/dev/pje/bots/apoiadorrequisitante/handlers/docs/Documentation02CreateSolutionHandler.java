@@ -105,7 +105,7 @@ public class Documentation02CreateSolutionHandler extends Handler<JiraEventIssue
 	public List<ProcessingMessage> atualizaDocs(String gitlabProjectId, VersionReleaseNotes releaseNotes) {
 		messages.clean();
 		
-//		this.atualizaReleaseNotesGitLab(releaseNotes);
+		this.atualizaReleaseNotesGitLab(releaseNotes);
 		
 		GitlabProjectExtended gitlabProject = this.gitlabService.getProjectDetails(gitlabProjectId);
 		this.atualizaDocsPje(gitlabProject.getName(), releaseNotes);
