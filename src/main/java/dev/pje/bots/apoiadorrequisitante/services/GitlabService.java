@@ -802,20 +802,26 @@ public class GitlabService {
 			gitlabMRResponse = gitlabClient.rebaseMergeRequest(projectId, mergeRequestIId);
 			if (BooleanUtils.isTrue(gitlabMRResponse.getRebaseInProgress())) {
 				while (true) {
+					logger.info("Em processamento rebase do MR#{}. Thread.sleep(5000)", mergeRequestIId);
 					Thread.sleep(5000);
 					gitlabMRResponse = gitlabClient.getSingleMergeRequest(projectId, mergeRequestIId);
 					if (BooleanUtils.isFalse(gitlabMRResponse.getRebaseInProgress())) {
 						if (StringUtils.isNotEmpty(gitlabMRResponse.getMergeError())) {
+							logger.info("Rebase do MR#{} finalizado com erro (1).", mergeRequestIId);
 							throw new Exception(gitlabMRResponse.getMergeError());
 						}
+						logger.info("Rebase do MR#{} finalizado.", mergeRequestIId);
 						break;
 					}
 				}
 			} else {
 				if (StringUtils.isNotEmpty(gitlabMRResponse.getMergeError())) {
+					logger.info("Rebase do MR#{} finalizado com erro (2).", mergeRequestIId);
 					throw new Exception(gitlabMRResponse.getMergeError());
 				}
 			}
+			logger.info("hold 1 second before return rebaseMergeRequest(String {}, BigDecimal {})", projectId, mergeRequestIId);
+			Thread.sleep(1000);
 		} catch (Exception e) {
 			throw new GitlabException(String.format("Falha ao realizar rebase do MR#%s do projeto %s. Erro: %s", mergeRequestIId, projectId, e.getLocalizedMessage()));
 		}
