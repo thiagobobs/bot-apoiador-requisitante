@@ -2,10 +2,7 @@ package dev.pje.bots.apoiadorrequisitante.services;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -58,6 +55,7 @@ import com.devplatform.model.gitlab.response.GitlabRepositoryTree;
 import com.devplatform.model.gitlab.vo.GitlabCommitFileVO;
 import com.devplatform.model.gitlab.vo.GitlabMergeRequestVO;
 import com.devplatform.model.gitlab.vo.GitlabScriptVersaoVO;
+import com.fasterxml.jackson.core.JsonProcessingException;
 
 import dev.pje.bots.apoiadorrequisitante.clients.GitlabClient;
 import dev.pje.bots.apoiadorrequisitante.exception.GitlabException;
@@ -98,6 +96,7 @@ public class GitlabService {
 	public static final String FIRST_SCRIPT_PREFIX = "PJE_";
 	public static final String FIRST_SCRIPT_SUFFIX = "_001__VERSAO_INICIAL.sql";
 	public static final String POMXML = "pom.xml";
+	public static final String PACKAGE_JSON = "package.json";
 	public static final String AUTHOR_NAME = "Bot Revisor do PJe";
 	public static final String AUTHOR_EMAIL = "bot.revisor.pje@cnj.jus.br";
 	
@@ -1152,20 +1151,32 @@ public class GitlabService {
 	}
 	
 	public String getVersion(String projectId, String branchName, boolean onlyNumbers) {
-		String pomContent = this.getRawFile(projectId, branchName,  POMXML);
-		String projectVersionTagname = this.getProjectVersionTagName(projectId);
-
 		String version = null;
-		if (StringUtils.isNotEmpty(pomContent)) {
-			version = Utils.getElementFromXML(pomContent, projectVersionTagname);
-		}
 
-		if (StringUtils.isEmpty(version)) {
-			logger.error("Não foi possível recuperar o número da versão no arquivo {} para o caminho {}", POMXML, projectVersionTagname);
+		if (projectId.equals("180")) { // pje2-web
+			String jsonContent = this.getRawFile(projectId, branchName, PACKAGE_JSON);
+			if (StringUtils.isNotEmpty(jsonContent)) {
+				try {
+					version = Utils.getElementFromJSON(jsonContent);
+					version = onlyNumbers ? Utils.clearVersionNumber(version): version;
+				} catch (JsonProcessingException ex) {
+					logger.error("Não foi possível recuperar o número da versão no arquivo {}. {}", PACKAGE_JSON, ex.getLocalizedMessage());
+				}
+			}
 		} else {
-			version = onlyNumbers ? Utils.clearVersionNumber(version): version;
-		}
+			String pomContent = this.getRawFile(projectId, branchName,  POMXML);
+			String projectVersionTagname = this.getProjectVersionTagName(projectId);
+			
+			if (StringUtils.isNotEmpty(pomContent)) {
+				version = Utils.getElementFromXML(pomContent, projectVersionTagname);
+			}
 
+			if (StringUtils.isEmpty(version)) {
+				logger.error("Não foi possível recuperar o número da versão no arquivo {} para o caminho {}", POMXML, projectVersionTagname);
+			} else {
+				version = onlyNumbers ? Utils.clearVersionNumber(version): version;
+			}
+		}
 		return version;
 	}
 	

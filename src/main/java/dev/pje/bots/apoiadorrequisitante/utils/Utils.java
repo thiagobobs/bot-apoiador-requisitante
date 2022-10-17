@@ -442,6 +442,11 @@ public class Utils {
 			e.printStackTrace();
 		}
 	}
+
+	public static String getElementFromJSON(String jsonContent) throws JsonProcessingException {
+		ObjectMapper mapper = new ObjectMapper();
+		return mapper.readTree(jsonContent).findValue("version").textValue();
+	}
 	
 	public static String getElementFromXML(String xml, String tagPath) {
 		String elementValue = "";
@@ -597,5 +602,6 @@ public class Utils {
 
 		return issueKey;
 	}
+
 }
 	
