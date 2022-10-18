@@ -37,6 +37,7 @@ public class MergeEventHandler extends Handler<GitlabEventMergeRequest> {
 		STATUS_ID.put("PJEVII", "2261");
 		STATUS_ID.put("PJEWEB", "2261");
 		STATUS_ID.put("PJECRI", "371");
+		STATUS_ID.put("PJEMNICLI", "371");
 		STATUS_ID.put("SISBAJUD", "121"); // Transição: Aprovar entrega
 	}
 

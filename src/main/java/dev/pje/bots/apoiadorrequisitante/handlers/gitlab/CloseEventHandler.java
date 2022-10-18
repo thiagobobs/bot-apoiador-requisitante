@@ -35,7 +35,8 @@ public class CloseEventHandler extends Handler<GitlabEventMergeRequest> {
 		STATUS_ID.put("PJEII", "2131");
 		STATUS_ID.put("PJEVII", "2131");
 		STATUS_ID.put("PJEWEB", "2131");
-		STATUS_ID.put("PJECRI", "2131");
+		STATUS_ID.put("PJECRI", "321");
+		STATUS_ID.put("PJEMNICLI", "321");
 		STATUS_ID.put("SISBAJUD", "351"); // Transição: Rejeitar Entrega
 	}
 

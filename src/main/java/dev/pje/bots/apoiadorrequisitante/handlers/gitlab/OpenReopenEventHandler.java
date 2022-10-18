@@ -44,6 +44,7 @@ public class OpenReopenEventHandler extends Handler<GitlabEventMergeRequest> {
 		STATUS_ID.put("PJEVII", new IssueStatus(BigDecimal.valueOf(3), "EM PROGRESSO", "1931"));
 		STATUS_ID.put("PJEWEB", new IssueStatus(BigDecimal.valueOf(3), "EM PROGRESSO", "1931"));
 		STATUS_ID.put("PJECRI", new IssueStatus(BigDecimal.valueOf(10392), "FAZENDO", "271"));
+		STATUS_ID.put("PJEMNICLI", new IssueStatus(BigDecimal.valueOf(10392), "FAZENDO", "271"));
 		STATUS_ID.put("SISBAJUD", new IssueStatus(BigDecimal.valueOf(3), "EM PROGRESSO", "381"));
 	}
 
