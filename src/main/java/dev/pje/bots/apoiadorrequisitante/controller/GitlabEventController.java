@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.devplatform.model.gitlab.event.GitlabEventMergeRequest;
 import com.devplatform.model.gitlab.event.GitlabEventPipeline;
+import com.devplatform.model.gitlab.event.GitlabEventPush;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -20,6 +21,7 @@ import dev.pje.bots.apoiadorrequisitante.handlers.gitlab.LabelsChangeEventHandle
 import dev.pje.bots.apoiadorrequisitante.handlers.gitlab.MergeEventHandler;
 import dev.pje.bots.apoiadorrequisitante.handlers.gitlab.OpenReopenEventHandler;
 import dev.pje.bots.apoiadorrequisitante.handlers.gitlab.PipelineEventHandler;
+import dev.pje.bots.apoiadorrequisitante.handlers.gitlab.PushEventHandler;
 import dev.pje.bots.apoiadorrequisitante.services.GitlabService;
 
 @RestController()
@@ -30,8 +32,8 @@ public class GitlabEventController {
 	@Autowired
 	private ObjectMapper objectMapper;
 	
-//	@Autowired
-//	private Gitlab010CheckingNewScriptMigrationsInCommitHandler gitlab010CheckNewScriptMigrationInCommit;
+	@Autowired
+	private PushEventHandler pushEventHandler;
 	
 	@Autowired
 	private OpenReopenEventHandler openReopenEventHandler;
@@ -55,15 +57,16 @@ public class GitlabEventController {
 	public void process(@RequestHeader("X-Gitlab-Event") String eventType, @RequestBody String inputJson) throws JsonProcessingException {
 		logger.info("Event type: {}", eventType);
 
-//		if (eventType.contains("Push")) {
-//			GitlabEventPush event = objectMapper.readValue(inputJson, GitlabEventPush.class);
-//			logger.info("[GITLAB][PUSH] -> PROJECT {} | BRANCH {}", event.getProject().getName(), event.getRef());
-//			
-//			this.gitlab010CheckNewScriptMigrationInCommit.handle(event);
-//		} else 
+		if (eventType.contains("Push")) {
+			GitlabEventPush event = objectMapper.readValue(inputJson, GitlabEventPush.class);
+			logger.info("[GITLAB][EVENT PUSH] -> PROJECT {} | BRANCH {}", event.getProject().getName(), event.getRef());
+			
+			this.pushEventHandler.handle(event);
+		} else 
 		if (eventType.contains("Merge Request")) {
 			GitlabEventMergeRequest event = objectMapper.readValue(inputJson, GitlabEventMergeRequest.class);
-			logger.info("[GITLAB][MERGE REQUEST] -> PROJECT {} | MR#{} | ACTION {}", event.getProject().getName(), event.getObjectAttributes().getIid(), event.getObjectAttributes().getAction().name());
+			logger.info("[GITLAB][EVENT MERGE REQUEST] -> PROJECT {} | BRANCH {} | MR#{} | ACTION {}", 
+					event.getProject().getName(), event.getObjectAttributes().getSourceBranch(), event.getObjectAttributes().getIid(), event.getObjectAttributes().getAction().name());
 			
 			this.openReopenEventHandler.handle(event);
 			this.labelsChangeEventHandler.handle(event);
@@ -72,7 +75,7 @@ public class GitlabEventController {
 			
 		} else if (eventType.contains("Pipeline")) {
 			GitlabEventPipeline event = objectMapper.readValue(inputJson, GitlabEventPipeline.class);
-			logger.info("[GITLAB][PIPELINE] -> PROJECT {} | BRANCH {}", event.getProject().getName(), event.getObjectAttributes().getRef());
+			logger.info("[GITLAB][EVENT PIPELINE] -> PROJECT {} | BRANCH {}", event.getProject().getName(), event.getObjectAttributes().getRef());
 			
 			this.pipelineEventHandler.handle(event);
 		}

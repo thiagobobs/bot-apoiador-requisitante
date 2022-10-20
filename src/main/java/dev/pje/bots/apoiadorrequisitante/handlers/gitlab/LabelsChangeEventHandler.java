@@ -143,10 +143,10 @@ public class LabelsChangeEventHandler extends Handler<GitlabEventMergeRequest>{
 											labelsAprovacao.size() >= 3) {
 
 									try {
-										this.gitlabService.acceptMergeRequest(event.getProject().getId().toString(), event.getObjectAttributes().getIid());
+										this.gitlabService.rebaseMergeRequest(event.getProject().getId().toString(), event.getObjectAttributes().getIid());
 									} catch (GitlabException ex) {
 										this.gitlabService.sendMergeRequestComment(event.getProject().getId().toString(), event.getObjectAttributes().getIid(), ex.getLocalizedMessage());
-//										this.gitlabService.closeMergeRequest(event.getProject().getId().toString(), event.getObjectAttributes().getIid());
+										this.gitlabService.closeMergeRequest(event.getProject().getId().toString(), event.getObjectAttributes().getIid());
 									}
 								}
 							}

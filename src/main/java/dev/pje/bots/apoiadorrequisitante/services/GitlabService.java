@@ -819,8 +819,8 @@ public class GitlabService {
 					throw new Exception(gitlabMRResponse.getMergeError());
 				}
 			}
-			logger.info("hold 1 second before return rebaseMergeRequest(String {}, BigDecimal {})", projectId, mergeRequestIId);
-			Thread.sleep(1000);
+//			logger.info("hold 1 second before return rebaseMergeRequest(String {}, BigDecimal {})", projectId, mergeRequestIId);
+//			Thread.sleep(1000);
 		} catch (Exception e) {
 			throw new GitlabException(String.format("Falha ao realizar rebase do MR#%s do projeto %s. Erro: %s", mergeRequestIId, projectId, e.getLocalizedMessage()));
 		}
@@ -982,8 +982,6 @@ public class GitlabService {
 			} else if (mrOpened.getHeadPipeline().getStatus().equals(GitlabPipelineStatusEnum.FAILED)) {
 				throw new GitlabException(String.format("MR#%s não pode ser aceito pois o processamento do CI/CD não encerrou corretamente", mrOpened.getIid()));
 			} else {
-				this.rebaseMergeRequest(projectId, mrIID);
-
 				GitlabAcceptMRRequest acceptMerge = new GitlabAcceptMRRequest();
 				acceptMerge.setMergeRequestIid(mrOpened.getIid());
 				acceptMerge.setId(projectId);
