@@ -696,6 +696,22 @@ public class GitlabService {
 			}
 
 			for (GitlabMRResponse mergeRequest : mergeRequests) {
+				mergeRequest = getMergeRequest(projectId, mergeRequest.getIid());
+
+				while (true) {
+					if (GitlabMergeRequestStatusEnum.CHECKING.equals(mergeRequest.getMergeStatus()) || GitlabMergeRequestStatusEnum.CANNOT_BE_MERGED_RECHECK.equals(mergeRequest.getMergeStatus())) {
+						try {
+							Thread.sleep(2000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+					} else {
+						break;
+					}
+					
+					mergeRequest = getMergeRequest(projectId, mergeRequest.getIid());
+				}
+
 				logger.info("MR# " + mergeRequest.getIid());
 				logger.info("Title: " + mergeRequest.getTitle());
 				logger.info("merge_status: " + mergeRequest.getMergeStatus().name());
@@ -920,9 +936,18 @@ public class GitlabService {
 		GitlabMRResponse mrOpened = this.openMergeRequest(projectId, sourceBranch, targetBranch, mergeMessage, labels, squashCommits, removeSourceBranch);
 		if(mrOpened != null) {
 			mrAccepted = this.acceptMergeRequest(projectId, mrOpened.getIid(), squashCommits, removeSourceBranch);
+			this.deleteBranch(projectId, sourceBranch);
 		}
 
 		return mrAccepted;
+	}
+
+	public void deleteBranch(String projectId, String branch) {
+		try {
+			this.gitlabClient.deleteRepositoryBranch(projectId, branch);
+		} catch (Exception e) {
+			logger.error("Falha ao excluir branch {} do projeto {}. Erro: {}", branch, projectId, e.getLocalizedMessage());
+		}
 	}
 	
 	public GitlabMRResponse openMergeRequest(String projectId, String sourceBranch, String targetBranch,
@@ -965,23 +990,41 @@ public class GitlabService {
 
 		return updateMergeRequest(projectId, mergeRequestIId, updateMerge);
 	}
-
-	public GitlabMRResponse acceptMergeRequest(String projectId, BigDecimal mrIID) throws GitlabException {
-		return acceptMergeRequest(projectId, mrIID, true, true);
-	}
 	
 	public GitlabMRResponse acceptMergeRequest(String projectId, BigDecimal mrIID, Boolean squashCommits, Boolean removeSourceBranch) throws GitlabException {
-		GitlabMRResponse mrAccepted = null;
-
 		GitlabMRResponse mrOpened = getMergeRequest(projectId, mrIID);
 		if (mrOpened != null) {
 			if (!mrOpened.getState().equals(GitlabMergeRequestStateEnum.OPENED)) {
 				throw new GitlabException(String.format("MR#%s não pode ser aceito pois possui status igual a %s", mrOpened.getIid(), mrOpened.getState()));
-			}else if (BooleanUtils.isTrue(mrOpened.getHasConflicts())) {
-				throw new GitlabException(String.format("MR#%s não pode ser aceito pois apresenta conflitos de integração", mrOpened.getIid()));
-			} else if (mrOpened.getHeadPipeline().getStatus().equals(GitlabPipelineStatusEnum.FAILED)) {
+//			} else if (BooleanUtils.isTrue(mrOpened.getHasConflicts())) {
+//				throw new GitlabException(String.format("MR#%s não pode ser aceito pois apresenta conflitos de integração", mrOpened.getIid()));
+			} else if (mrOpened.getHeadPipeline() != null && mrOpened.getHeadPipeline().getStatus().equals(GitlabPipelineStatusEnum.FAILED)) {
 				throw new GitlabException(String.format("MR#%s não pode ser aceito pois o processamento do CI/CD não encerrou corretamente", mrOpened.getIid()));
 			} else {
+				logger.info("MR#{} com status {}", mrIID, mrOpened.getMergeStatus().name());
+
+				if (!mrOpened.getMergeStatus().equals(GitlabMergeRequestStatusEnum.CAN_BE_MERGED)) {
+					do {
+						try {
+							logger.info("Waiting for 5 seconds");
+							Thread.sleep(5000);
+						} catch (InterruptedException e) {
+							e.printStackTrace();
+						}
+						logger.info("Poll the API endpoint \"getMergeRequest({}, {})\" to get updated status.", projectId, mrIID);
+						mrOpened = getMergeRequest(projectId, mrIID);
+						logger.info("MR#{} com status {}", mrIID, mrOpened.getMergeStatus().name());
+					} while (mrOpened.getMergeStatus().equals(GitlabMergeRequestStatusEnum.CHECKING));
+				}
+
+				if (BooleanUtils.isTrue(mrOpened.getHasConflicts())) {
+					throw new GitlabException(String.format("MR#%s não pode ser aceito pois apresenta conflitos de integração", mrOpened.getIid()));
+				}
+
+				if (!mrOpened.getMergeStatus().equals(GitlabMergeRequestStatusEnum.CAN_BE_MERGED)) {
+					throw new GitlabException(String.format("MR#%s não pode ser aceito pois apresenta status igual a %s", mrOpened.getIid(), mrOpened.getMergeStatus()));
+				}
+
 				GitlabAcceptMRRequest acceptMerge = new GitlabAcceptMRRequest();
 				acceptMerge.setMergeRequestIid(mrOpened.getIid());
 				acceptMerge.setId(projectId);
@@ -989,13 +1032,11 @@ public class GitlabService {
 				acceptMerge.setSquash(squashCommits);
 				acceptMerge.setShouldRemoveSourceBranch(removeSourceBranch);
 
-				mrAccepted = this.acceptMergeRequest(projectId, mrIID, acceptMerge);
+				return this.acceptMergeRequest(projectId, mrIID, acceptMerge);
 			}
 		} else {
 			throw new GitlabException(String.format("MR#%s não existe para o projeto cujo id é %s", mrIID, projectId));
 		}
-
-		return mrAccepted;
 	}
 	
 	public GitlabMRResponse atualizaLabelsMR(GitlabMergeRequestAttributes mergeRequest, List<String> labels) {

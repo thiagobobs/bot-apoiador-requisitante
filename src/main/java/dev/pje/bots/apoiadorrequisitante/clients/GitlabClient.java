@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.cloud.openfeign.SpringQueryMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import com.devplatform.model.gitlab.GitLabPipeline;
 import com.devplatform.model.gitlab.GitlabDiscussion;
-import com.devplatform.model.gitlab.GitlabNote;
 import com.devplatform.model.gitlab.GitlabMergeRequestPipeline;
+import com.devplatform.model.gitlab.GitlabNote;
 import com.devplatform.model.gitlab.GitlabProjectExtended;
 import com.devplatform.model.gitlab.GitlabProjectVariable;
 import com.devplatform.model.gitlab.GitlabTag;
@@ -92,6 +93,9 @@ public interface GitlabClient {
 			@PathVariable("projectId") String projectId,
 			@RequestBody GitlabBranchRequest branchRequest
 			);
+
+	@DeleteMapping(value = "/api/v4/projects/{projectId}/repository/branches/{branches}", consumes = "application/json")
+	public void deleteRepositoryBranch(@PathVariable("projectId") String projectId, @PathVariable("branch") String branch);
 	
 	@GetMapping(value = "/api/v4/projects/{id}/merge_requests/{merge_request_iid}/commits", consumes = "application/json")
 	public List<GitlabCommitResponse> getSingleMergeRequestCommits(@PathVariable("id") BigDecimal gitlabProjectId, @PathVariable("merge_request_iid") BigDecimal mergeRequestId);

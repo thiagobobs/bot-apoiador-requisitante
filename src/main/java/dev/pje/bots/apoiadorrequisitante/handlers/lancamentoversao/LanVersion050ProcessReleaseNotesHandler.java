@@ -222,7 +222,7 @@ public class LanVersion050ProcessReleaseNotesHandler extends Handler<JiraEventIs
 		return implementsGitflow;
 	}
 	
-	public MessagesLogger atualizaPastaScripts(String gitlabProjectId, String newVersion) {
+	private MessagesLogger atualizaPastaScripts(String gitlabProjectId, String newVersion) {
 		messages.clean();
 		
 //		String branchName = GitlabService.BRANCH_MASTER;
@@ -272,6 +272,8 @@ public class LanVersion050ProcessReleaseNotesHandler extends Handler<JiraEventIs
 		String branchName = this.isImplementsGitflow(gitlabProjectId) ? GitlabService.BRANCH_RELEASE_CANDIDATE_PREFIX + launchVersion : GitlabService.BRANCH_MASTER;
 
 		if (StringUtils.isNotBlank(branchName)) {
+			this.atualizaPastaScripts(gitlabProjectId, launchVersion);
+
 			String commitMessage = "[RELEASE] Integração do branch " + branchName;
 
 			GitlabMRResponse mrAccepted = null;

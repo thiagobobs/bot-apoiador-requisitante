@@ -55,15 +55,15 @@ public class LancamentoVersaoController {
 	}
 	
 	/** Lançamento oficial versão*/
-	
-	@PutMapping(value = "/gitlab-project/{id}/relase-branch/{version}/prepare")
-	public List<ProcessingMessage> prepareReleaseBranchForLaunchVersion(@PathVariable String id, @PathVariable String version) {
-		// 1- RENOMEIA (CASO SEJA NECESSÁRIO) A PASTA/ARQUIVOS DE SCRIPT SQL 
-		return this.handler050.atualizaPastaScripts(id, version).messages;
-	}
-	
+
+//	@PutMapping(value = "/gitlab-project/{id}/relase-branch/{version}/prepare")
+//	public List<ProcessingMessage> prepareReleaseBranchForLaunchVersion(@PathVariable String id, @PathVariable String version) {
+//		return this.handler050.atualizaPastaScripts(id, version).messages;
+//	}
+
 	@PutMapping(value = "/gitlab-project/{id}/release-branch/{version}/merge")
 	public List<ProcessingMessage> mergeReleaseBranchToStableBranch(@PathVariable String id, @PathVariable String version) {
+		// 1- RENOMEIA (CASO SEJA NECESSÁRIO) A PASTA/ARQUIVOS DE SCRIPT SQL
 		// 2- FAZ O MERGE DO BRANCH RELEASE NO BRANCH MASTER (ATENÇÃO: É NECESSÁRIO FAZER O REBASE MANUALMENTE DO RELEASE BRANCH COM O TARGET BRANCH)
 		// 3- EXCLUI O BRANCH RELEASE
 		return this.handler050.integraReleaseBranchNoBranchMaster(id, version);

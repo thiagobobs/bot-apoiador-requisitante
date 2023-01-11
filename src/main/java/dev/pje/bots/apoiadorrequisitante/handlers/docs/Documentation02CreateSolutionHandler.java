@@ -459,7 +459,7 @@ public class Documentation02CreateSolutionHandler extends Handler<JiraEventIssue
 
 				GitlabMRResponse mrResponse = gitlabService.openMergeRequestIntoBranchDefault(gitlabProjectId, branchName, commitMessage);
 				try {
-					gitlabService.acceptMergeRequest(gitlabProjectId, mrResponse.getIid());
+					gitlabService.acceptMergeRequest(gitlabProjectId, mrResponse.getIid(), true, true);
 				} catch (GitlabException ex) {
 					messages.error(ex.getLocalizedMessage());
 				}

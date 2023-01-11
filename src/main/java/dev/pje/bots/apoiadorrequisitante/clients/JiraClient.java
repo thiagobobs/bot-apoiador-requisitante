@@ -24,6 +24,7 @@ import com.devplatform.model.jira.JiraIssuetype;
 import com.devplatform.model.jira.JiraProject;
 import com.devplatform.model.jira.JiraProperty;
 import com.devplatform.model.jira.JiraUser;
+import com.devplatform.model.jira.JiraUserName;
 import com.devplatform.model.jira.JiraVersion;
 import com.devplatform.model.jira.custom.JiraCustomField;
 import com.devplatform.model.jira.custom.JiraCustomFieldOptionRequest;
@@ -176,5 +177,7 @@ public interface JiraClient {
 	public JiraIssuetype getIssueType(
 			@PathVariable("issueTypeId") String issueTypeId);
 
+	@PostMapping(value = "/rest/api/2/group/user?{options}")
+	public JiraVersion addUserToGroup(@RequestBody JiraUserName name, @SpringQueryMap Map<String, String> options);
 
 }

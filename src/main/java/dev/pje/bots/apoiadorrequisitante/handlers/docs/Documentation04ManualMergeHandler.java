@@ -80,7 +80,7 @@ public class Documentation04ManualMergeHandler extends Handler<JiraEventIssue>{
 										messages.info("Aprovando o MR: "+ mrIId + " - do projeto: " + gitlabProjectId);
 										GitlabMRResponse response = null;
 										if(APROVAR_MR_NA_TORA) {
-											response = gitlabService.acceptMergeRequest(gitlabProjectId, mrIIdBD);
+//											response = gitlabService.acceptMergeRequest(gitlabProjectId, mrIIdBD);
 											if(response == null) {
 												messages.error("Falhou ao tentar aprovar o MR: "+ mrIId + " - do projeto: " + gitlabProjectId);
 											}

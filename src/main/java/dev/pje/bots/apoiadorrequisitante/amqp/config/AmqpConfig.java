@@ -10,33 +10,33 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
 
-@EnableRabbit
-@Configuration
+//@EnableRabbit
+//@Configuration
 public class AmqpConfig {
 	
-	@Autowired
-	private ConnectionFactory connectionFactory;
-
-	@Value("${spring.rabbitmq.listener.direct.prefetch}") 
-	private Integer prefetch;
-
-    @Bean
-    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory() {
-      SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
-      factory.setConnectionFactory(connectionFactory);
-      factory.setMessageConverter(messageConverter());
-      factory.setPrefetchCount(prefetch);
-      return factory;
-    }
-    
-    @Bean
-    public MappingJackson2MessageConverter consumerJackson2MessageConverter() {
-        return new MappingJackson2MessageConverter();
-    }
-
-    @Bean
-    public Jackson2JsonMessageConverter messageConverter() {
-        return new Jackson2JsonMessageConverter();
-    }
+//	@Autowired
+//	private ConnectionFactory connectionFactory;
+//
+//	@Value("${spring.rabbitmq.listener.direct.prefetch}") 
+//	private Integer prefetch;
+//
+//    @Bean
+//    public SimpleRabbitListenerContainerFactory rabbitListenerContainerFactory() {
+//      SimpleRabbitListenerContainerFactory factory = new SimpleRabbitListenerContainerFactory();
+//      factory.setConnectionFactory(connectionFactory);
+//      factory.setMessageConverter(messageConverter());
+//      factory.setPrefetchCount(prefetch);
+//      return factory;
+//    }
+//    
+//    @Bean
+//    public MappingJackson2MessageConverter consumerJackson2MessageConverter() {
+//        return new MappingJackson2MessageConverter();
+//    }
+//
+//    @Bean
+//    public Jackson2JsonMessageConverter messageConverter() {
+//        return new Jackson2JsonMessageConverter();
+//    }
 
 }

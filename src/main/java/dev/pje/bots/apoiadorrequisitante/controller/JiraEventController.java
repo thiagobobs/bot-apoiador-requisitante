@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.devplatform.model.jira.JiraUserCreate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import dev.pje.bots.apoiadorrequisitante.services.JiraService;
+
 @RestController
 public class JiraEventController {
 
@@ -18,11 +20,16 @@ public class JiraEventController {
 	@Autowired
 	private ObjectMapper objectMapper;
 
+	@Autowired
+	private JiraService jiraService;
+
 	@PostMapping(value = "/jira/user-create")
 	public void process(@RequestBody String json) {
 		try {
 			JiraUserCreate jiraUserCreate = objectMapper.readValue(json, JiraUserCreate.class);
-			logger.info("[JIRA][USER CREATE] {} {}", jiraUserCreate.getUser().getName(), jiraUserCreate.getUser().getEmailAddress());	
+			logger.info("[JIRA][{}] Username: {} / Email: {}", jiraUserCreate.getWebhookEvent().name(), jiraUserCreate.getUser().getName(), jiraUserCreate.getUser().getEmailAddress());
+
+			this.jiraService.editaGrupos(jiraUserCreate);
 		} catch (Exception ex) {
 			logger.error(ex.getLocalizedMessage(), ex);
 		}

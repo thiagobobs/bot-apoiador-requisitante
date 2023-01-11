@@ -46,104 +46,104 @@ import dev.pje.bots.apoiadorrequisitante.handlers.lancamentoversao.LanVersion050
 import dev.pje.bots.apoiadorrequisitante.handlers.lancamentoversao.LanVersion060FinishReleaseNotesProcessingHandler;
 import dev.pje.bots.apoiadorrequisitante.handlers.lancamentoversao.LanVersion070TagPushedEventHandler;
 
-@Component
+//@Component
 public class AmqpConsumer {
 
 	private static final Logger logger = LoggerFactory.getLogger(AmqpConsumer.class);
     
-	@Autowired
+
     private ObjectMapper objectMapper;
 	
-	@Autowired
+
 	private Jira010ApoiadorRequisitanteHandler jira010ApoiadorRequisitanteHandler;
 
-	@Autowired
+
 	private Jira020ClassificationHandler jira020ClassificationHandler;
 	
-	@Autowired
+
 	private Jira030DemandanteHandler jira030DemandanteHandler;
 
-	@Autowired
+
 	private Jira040RaiaFluxoHandler jira040RaiaFluxoHandler;
 
-	@Autowired
+
 	private Jira070RegistroAtividadesDemandasHandler jira070RegistroAtividadesDemandasHandler;
 
 	/**************/
-	@Autowired
+
 	private Gitlab010CheckingNewScriptMigrationsInCommitHandler gitlab010CheckNewScriptMigrationInCommit;
 
-	@Autowired
+
 	private Gitlab020GitflowEventHandler gitlab020Gitflow;
 
-	@Autowired
+
 	private OpenReopenEventHandler gitlab030MergeRequestMergeOrClose;
 
-	@Autowired
+
 	private Gitlab040TagPushFinishVersionHandler gitlab040TagPushFinishVersion;
 
-	@Autowired
+
 	private LabelsChangeEventHandler gitlab060MergeRequestApprovals;
 
-	@Autowired
+
 	private PipelineEventHandler gitlab070PipelineFailed;
 
 	/**************/
-	@Autowired
+
 	private LanVersion010TriageHandler lanversion010;
 
-	@Autowired
+
 	private LanVersion015PrepareActualVersionHandler lanversion015;
 
-	@Autowired
+
 	private LanVersion020GenerateReleaseCandidateHandler lanversion020;
 
-	@Autowired
+
 	private LanVersion030PrepareNextVersionHandler lanversion030;
 
-	@Autowired
+
 	private LanVersion040GenerateReleaseNotesHandler lanversion040;
 
-	@Autowired
+
 	private LanVersion050ProcessReleaseNotesHandler lanversion050;
 	
-	@Autowired
+
 	private LanVersion060FinishReleaseNotesProcessingHandler lanversion060;
 	
-	@Autowired
+
 	private LanVersion070TagPushedEventHandler lanversion070;
 
 	/**************/
-	@Autowired
+
 	private Documentation01TriageHandler documentation01;
 
-	@Autowired
+
 	private Documentation02CreateSolutionHandler documentation02;
 
-	@Autowired
+
 	private Documentation03CheckAutomaticMergeHandler documentation03;
 	
-	@Autowired
+
 	private Documentation04ManualMergeHandler documentation04;
 	
-	@Autowired
+
 	private Documentation05FinishHomologationHandler documentation05;
 	
 	/***************/
-	@Autowired
+
 	private Gamification010ClassificarAreasConhecimentoHandler gamification010;
 
-	@Autowired
+	
 	private Gamification020CalcularPrioridadeDemandaHandler gamification020;
 
 	/***************/
 	
-	@RabbitListener(
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.default-receive-queue}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.jira.issue-created.routing-key}", "${spring.rabbitmq.template.custom.jira.issue-updated.routing-key}"})
-		)
+//	@RabbitListener(
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.default-receive-queue}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.jira.issue-created.routing-key}", "${spring.rabbitmq.template.custom.jira.issue-updated.routing-key}"})
+//		)
 	public void jira010Requisitante(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -158,13 +158,13 @@ public class AmqpConsumer {
 		}
 	}	
 
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.jira020-classification-queue.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.jira020-classification-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.jira.issue-created.routing-key}", "${spring.rabbitmq.template.custom.jira.issue-updated.routing-key}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.jira020-classification-queue.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.jira020-classification-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.jira.issue-created.routing-key}", "${spring.rabbitmq.template.custom.jira.issue-updated.routing-key}"})
+//		)
 	public void jira020Classification(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -179,13 +179,13 @@ public class AmqpConsumer {
 		}
 	}
 
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.jira030-resposta-demandante.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.jira030-resposta-demandante.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.jira.issue-updated.routing-key}", "${spring.rabbitmq.template.custom.jira.issue-generic.routing-key}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.jira030-resposta-demandante.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.jira030-resposta-demandante.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.jira.issue-updated.routing-key}", "${spring.rabbitmq.template.custom.jira.issue-generic.routing-key}"})
+//		)
 	public void jira030RespostaDemandante(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -200,13 +200,13 @@ public class AmqpConsumer {
 		}
 	}
 	
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.jira040-raia-fluxo.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.jira040-raia-fluxo.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.jira.issue-created.routing-key}", "${spring.rabbitmq.template.custom.jira.issue-updated.routing-key}", "${spring.rabbitmq.template.custom.jira.issue-generic.routing-key}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.jira040-raia-fluxo.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.jira040-raia-fluxo.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.jira.issue-created.routing-key}", "${spring.rabbitmq.template.custom.jira.issue-updated.routing-key}", "${spring.rabbitmq.template.custom.jira.issue-generic.routing-key}"})
+//		)
 	public void jira040RaiaFluxo(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -221,13 +221,13 @@ public class AmqpConsumer {
 		}
 	}
 	
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.jira070-registro-atividades.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.jira070-registro-atividades.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.jira.issue-updated.routing-key}", "${spring.rabbitmq.template.custom.jira.issue-generic.routing-key}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.jira070-registro-atividades.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.jira070-registro-atividades.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.jira.issue-updated.routing-key}", "${spring.rabbitmq.template.custom.jira.issue-generic.routing-key}"})
+//		)
 	public void jira070RegistroAtividadesDemandasHandler(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -394,13 +394,13 @@ public class AmqpConsumer {
 	// Consumers de lancamento de versao
 	/************************/
 
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.lanver010-triage-queue.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver010-triage-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.lanver010-triage-queue.routing-key-created}", "${spring.rabbitmq.template.custom.lanver010-triage-queue.routing-key-updated}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.lanver010-triage-queue.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver010-triage-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.lanver010-triage-queue.routing-key-created}", "${spring.rabbitmq.template.custom.lanver010-triage-queue.routing-key-updated}"})
+//		)
 	public void lanVer010Triage(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -411,13 +411,13 @@ public class AmqpConsumer {
 		}
 	}
 	
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.lanver015-prepare-actual-version-queue.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver015-prepare-actual-version-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.lanver015-prepare-actual-version-queue.routing-key-updated}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.lanver015-prepare-actual-version-queue.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver015-prepare-actual-version-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.lanver015-prepare-actual-version-queue.routing-key-updated}"})
+//		)
 	public void lanVer015PrepareActualVersion(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -428,13 +428,13 @@ public class AmqpConsumer {
 		}
 	}	
 
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.lanver020-release-candidate-queue.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver020-release-candidate-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.lanver020-release-candidate-queue.routing-key-updated}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.lanver020-release-candidate-queue.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver020-release-candidate-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.lanver020-release-candidate-queue.routing-key-updated}"})
+//		)
 	public void lanVer020GenerateReleaseCandidate(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -445,13 +445,13 @@ public class AmqpConsumer {
 		}
 	}	
 
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.lanver030-next-version-queue.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver030-next-version-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.lanver030-next-version-queue.routing-key-updated}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.lanver030-next-version-queue.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver030-next-version-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.lanver030-next-version-queue.routing-key-updated}"})
+//		)
 	public void lanVer030PrepareNextVersion(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -462,13 +462,13 @@ public class AmqpConsumer {
 		}
 	}	
 
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.lanver040-release-notes-queue.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver040-release-notes-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.lanver040-release-notes-queue.routing-key-updated}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.lanver040-release-notes-queue.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver040-release-notes-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.lanver040-release-notes-queue.routing-key-updated}"})
+//		)
 	public void lanVer040GenerateReleaseNotes(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -479,13 +479,13 @@ public class AmqpConsumer {
 		}
 	}	
 
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.lanver050-version-launch-queue.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver050-version-launch-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.lanver050-version-launch-queue.routing-key-updated}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.lanver050-version-launch-queue.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver050-version-launch-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.lanver050-version-launch-queue.routing-key-updated}"})
+//		)
 	public void lanVer050ProcessReleaseNotes(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -496,13 +496,13 @@ public class AmqpConsumer {
 		}
 	}
 	
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.lanver060-publish-release-notes-queue.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver060-publish-release-notes-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.lanver060-publish-release-notes-queue.routing-key-updated}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.lanver060-publish-release-notes-queue.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver060-publish-release-notes-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.lanver060-publish-release-notes-queue.routing-key-updated}"})
+//		)
 	public void lanVer060FinishReleaseNotesProcessing(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -517,13 +517,13 @@ public class AmqpConsumer {
 		}
 	}
 	
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.lanver070-tag-pushed-queue.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver070-tag-pushed-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC),
-				key = {"${spring.rabbitmq.template.custom.gitlab.tag-push.routing-key}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.lanver070-tag-pushed-queue.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.lanver070-tag-pushed-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC),
+//				key = {"${spring.rabbitmq.template.custom.gitlab.tag-push.routing-key}"})
+//		)
 	public void lanver070TagPushed(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -545,14 +545,14 @@ public class AmqpConsumer {
 	/************************/
 	// Consumers de documentacao
 	/************************/
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.documentation01-triage-queue.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.documentation01-triage-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.documentation01-triage-queue.routing-key-created}",
-						"${spring.rabbitmq.template.custom.documentation01-triage-queue.routing-key-updated}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.documentation01-triage-queue.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.documentation01-triage-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.documentation01-triage-queue.routing-key-created}",
+//						"${spring.rabbitmq.template.custom.documentation01-triage-queue.routing-key-updated}"})
+//		)
 	public void documentation01TriageProcessing(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -563,13 +563,13 @@ public class AmqpConsumer {
 		}
 	}
 
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.documentation02-create-solution-queue.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.documentation02-create-solution-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.documentation02-create-solution-queue.routing-key-updated}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.documentation02-create-solution-queue.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.documentation02-create-solution-queue.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.documentation02-create-solution-queue.routing-key-updated}"})
+//		)
 	public void documentation02CreateSolution(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -580,13 +580,13 @@ public class AmqpConsumer {
 		}
 	}
 
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.documentation03-check-automatic-merge.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.documentation03-check-automatic-merge.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.documentation03-check-automatic-merge.routing-key-updated}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.documentation03-check-automatic-merge.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.documentation03-check-automatic-merge.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.documentation03-check-automatic-merge.routing-key-updated}"})
+//		)
 	public void documentation03CheckAutomaticMerge(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -597,13 +597,13 @@ public class AmqpConsumer {
 		}
 	}
 
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.documentation04-manual-merge.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.documentation04-manual-merge.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.documentation04-manual-merge.routing-key-updated}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.documentation04-manual-merge.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.documentation04-manual-merge.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.documentation04-manual-merge.routing-key-updated}"})
+//		)
 	public void documentation04ManualMerge(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -614,13 +614,13 @@ public class AmqpConsumer {
 		}
 	}
 	
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.documentation05-finish-homologation.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.documentation05-finish-homologation.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.documentation05-finish-homologation.routing-key-updated}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.documentation05-finish-homologation.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.documentation05-finish-homologation.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.documentation05-finish-homologation.routing-key-updated}"})
+//		)
 	public void documentation05FinishHomologation(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -631,13 +631,13 @@ public class AmqpConsumer {
 		}
 	}
 	
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.gamification010-classificar-areas-conhecimento.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.gamification010-classificar-areas-conhecimento.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.gamification010-classificar-areas-conhecimento.routing-key-start}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.gamification010-classificar-areas-conhecimento.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.gamification010-classificar-areas-conhecimento.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.gamification010-classificar-areas-conhecimento.routing-key-start}"})
+//		)
 	public void gamification010ClassificarAreasConhecimento(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());
@@ -647,13 +647,13 @@ public class AmqpConsumer {
 		}
 	}
 	
-	@RabbitListener(
-			autoStartup = "${spring.rabbitmq.template.custom.gamification020-calculo-prioridade-demanda.auto-startup}",
-			bindings = @QueueBinding(
-				value = @Queue(value = "${spring.rabbitmq.template.custom.gamification020-calculo-prioridade-demanda.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
-				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
-				key = {"${spring.rabbitmq.template.custom.jira.issue-updated.routing-key}", "${spring.rabbitmq.template.custom.jira.issue-generic.routing-key}"})
-		)
+//	@RabbitListener(
+//			autoStartup = "${spring.rabbitmq.template.custom.gamification020-calculo-prioridade-demanda.auto-startup}",
+//			bindings = @QueueBinding(
+//				value = @Queue(value = "${spring.rabbitmq.template.custom.gamification020-calculo-prioridade-demanda.name}", durable = "true", autoDelete = "false", exclusive = "false"), 
+//				exchange = @Exchange(value = "${spring.rabbitmq.template.exchange}", type = ExchangeTypes.TOPIC), 
+//				key = {"${spring.rabbitmq.template.custom.jira.issue-updated.routing-key}", "${spring.rabbitmq.template.custom.jira.issue-generic.routing-key}"})
+//		)
 	public void gamification020CalculoPrioridadeGeralDemanda(Message msg) throws Exception {
 		if(msg != null && msg.getBody() != null && msg.getMessageProperties() != null) {
 			String body = new String(msg.getBody());

@@ -603,5 +603,16 @@ public class Utils {
 		return issueKey;
 	}
 
+	public static String getSiglaTribunal(String email) {
+		Pattern pattern = Pattern.compile("(?<=@)[^.]+(?=\\.)");
+		Matcher mather = pattern.matcher(email);
+
+		if (mather.find()) {
+			return mather.group();
+		}
+
+		return null;
+	}
+
 }
 	

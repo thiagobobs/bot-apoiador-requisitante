@@ -20,10 +20,10 @@ public class Scheduler {
 	
     private static final Logger logger = LoggerFactory.getLogger(Scheduler.class);
 
-    @Autowired
+//    @Autowired
     private AmqpProducer amqpProducer;
     
-    @Value("${spring.rabbitmq.template.custom.gamification010-classificar-areas-conhecimento.routing-key-start}")
+//    @Value("${spring.rabbitmq.template.custom.gamification010-classificar-areas-conhecimento.routing-key-start}")
     private String routingKey;
 
     /**

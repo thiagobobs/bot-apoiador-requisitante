@@ -40,6 +40,8 @@ import com.devplatform.model.jira.JiraIssuetype;
 import com.devplatform.model.jira.JiraProject;
 import com.devplatform.model.jira.JiraProperty;
 import com.devplatform.model.jira.JiraUser;
+import com.devplatform.model.jira.JiraUserCreate;
+import com.devplatform.model.jira.JiraUserName;
 import com.devplatform.model.jira.JiraVersion;
 import com.devplatform.model.jira.custom.JiraCustomField;
 import com.devplatform.model.jira.custom.JiraCustomFieldOption;
@@ -59,6 +61,7 @@ import com.devplatform.model.jira.response.JiraPropertyResponse;
 
 import dev.pje.bots.apoiadorrequisitante.clients.JiraClient;
 import dev.pje.bots.apoiadorrequisitante.utils.JiraUtils;
+import dev.pje.bots.apoiadorrequisitante.utils.TribunalEnum;
 import dev.pje.bots.apoiadorrequisitante.utils.Utils;
 
 @Service
@@ -2208,7 +2211,6 @@ public class JiraService {
 		return attachmentContent;
 	}
 
-//	@Cacheable(cacheNames = "issue-transitions")
 	public JiraIssueTransitions recuperarTransicoesIssue(String issueKey) {
 		JiraIssueTransitions transitions = null;
 		try {
@@ -2294,7 +2296,6 @@ public class JiraService {
 		return recuperaIssue(issueKey, options);
 	}
 
-	@Cacheable(cacheNames = "issue-details")
 	public JiraIssue recuperaIssue(String issueKey, Map<String, String> options) {
 		JiraIssue issueDetails = null;
 		try {
@@ -2302,9 +2303,6 @@ public class JiraService {
 		}catch (Exception e) {
 			String errorMesasge = "Erro ao recuperar os detalhes da issue: " + issueKey + "erro: " + e.getLocalizedMessage();
 			logger.error(errorMesasge);
-//			slackService.sendBotMessage(errorMesasge);
-//			rocketchatService.sendBotMessage(errorMesasge);
-//			telegramService.sendBotMessage(errorMesasge);
 		}
 		return issueDetails;
 	}
@@ -2935,4 +2933,22 @@ public class JiraService {
 		
 		return issue;
 	}
+
+	public void editaGrupos(JiraUserCreate jiraUserCreate) {
+		String siglaTribunal = Utils.getSiglaTribunal(jiraUserCreate.getUser().getEmailAddress());
+
+		// Valida sigla do tribunal obtida por meio do email do usuário.
+		try {
+			TribunalEnum.findBySigla(siglaTribunal);
+		} catch (IllegalArgumentException ex) {
+			logger.error(ex.getLocalizedMessage());
+			return;
+		}
+
+		this.jiraClient.addUserToGroup(new JiraUserName(jiraUserCreate.getUser().getName()), Collections.singletonMap("groupname", "PJE_DesenvolvedoresTribunais"));
+		this.jiraClient.addUserToGroup(new JiraUserName(jiraUserCreate.getUser().getName()), Collections.singletonMap("groupname", PREFIXO_GRUPO_TRIBUNAL + siglaTribunal.toUpperCase()));
+		this.jiraClient.addUserToGroup(new JiraUserName(jiraUserCreate.getUser().getName()), Collections.singletonMap("groupname", PREFIXO_GRUPO_DESENVOLVEDORES_FABRICA + siglaTribunal.toUpperCase()));
+	}
+
+	
 }

@@ -121,7 +121,7 @@ public class LanVersion040GenerateReleaseNotesHandler extends Handler<JiraEventI
 						// identifica a lista de projetos relacionados
 //						String jiraProjectKey = issue.getFields().getProject().getKey();
 						
-						String jiraProjectKey = gitlabService.getJiraProjectKey(gitlabProjectId);
+						String jiraProjectKey = gitlabProjectId.equals("7") ? "PJEII" : gitlabService.getJiraProjectKey(gitlabProjectId);
 						VersionReleaseNotes releaseNotes = null;
 						if (jiraProjectKey != null) {
 							List<String> jiraRelatedProjectKeys = jiraService.getJiraRelatedProjects(jiraProjectKey);

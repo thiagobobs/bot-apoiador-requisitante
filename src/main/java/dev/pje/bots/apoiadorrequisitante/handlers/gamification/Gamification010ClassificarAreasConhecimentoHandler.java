@@ -39,7 +39,7 @@ public class Gamification010ClassificarAreasConhecimentoHandler extends Handler<
 	@Value("${clients.jira.user}")
 	private String jiraBotUser;
 	
-	@Value("${spring.rabbitmq.template.custom.gamification010-classificar-areas-conhecimento.routing-key-end}")
+//	@Value("${spring.rabbitmq.template.custom.gamification010-classificar-areas-conhecimento.routing-key-end}")
 	private String routingKeyFinishClassification;
 	
 	@Override
@@ -47,7 +47,7 @@ public class Gamification010ClassificarAreasConhecimentoHandler extends Handler<
 		return logger;
 	}
 
-	@Autowired
+//	@Autowired
 	private AmqpProducer amqpProducer;
 
 	@Override
